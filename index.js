@@ -11,9 +11,10 @@ app.use(express.json());
 const usersSchema = new Schema({
   name: String,
   password: String,
-  email: { type: String, unique: true },
+  email: String,
   role: String,
   age: Number,
+  isMarried: Boolean,
 });
 const usersModel = mongoose.model("users", usersSchema);
 
@@ -34,8 +35,15 @@ app.get("/:id", async (req, res) => {
 
 app.post("/", async (req, res) => {
   try {
-    const { name, password, email, role, age } = req.body;
-    const newUsers = new usersModel({ name, password, email, role, age });
+    const { name, password, email, role, age, isMarried } = req.body;
+    const newUsers = new usersModel({
+      name,
+      password,
+      email,
+      role,
+      age,
+      isMarried,
+    });
     await newUsers.save();
     res.send("User is created!");
   } catch (error) {
@@ -45,13 +53,14 @@ app.post("/", async (req, res) => {
 
 app.put("/:id", async (req, res) => {
   const { id } = req.params;
-  const { name, password, email, role, age } = req.body;
+  const { name, password, email, role, age, isMarried } = req.body;
   const allUsers = await usersModel.findByIdAndUpdate(id, {
     name,
     password,
     email,
     role,
     age,
+    isMarried,
   });
   res.send(allUsers);
 });
